@@ -1,0 +1,20 @@
+body {
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  font-weight: 300;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+h2 span.counter {
+  font-weight: 700;
+}
+
+#testMsg {
+  height: 200px;
+  width: 300px;
+  padding: 30px;
+  text-align: center;
+  background-color: pink;
+}

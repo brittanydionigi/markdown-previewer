@@ -1,0 +1,21 @@
+{
+  "name": "markdown-previewer",
+  "version": "0.0.0",
+  "description": "Markdown previewer app for Firefox OS",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brittanystoroz/markdown-previewer.git"
+  },
+  "keywords": [
+    "markdown"
+  ],
+  "author": "Brittany Storoz",
+  "bugs": {
+    "url": "https://github.com/brittanystoroz/markdown-previewer/issues"
+  },
+  "homepage": "https://github.com/brittanystoroz/markdown-previewer",
+  "dependencies": {
+    "markdown-it": "^3.0.6"
+  }
+}

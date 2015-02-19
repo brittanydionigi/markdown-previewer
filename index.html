@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="SW Implementation">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SW Markdown Previewer</title>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+  </head>
+
+  <body>
+    <h1>Markdown Previewer</h1>
+    <img src="http://i.imgur.com/14JiQmL.jpg" alt="Kitteh" />
+    <h2>You Have <span class='counter'></span> Markdown Files:</h2>
+    <div id='testMsg'>Testing sending messages to SW</div>
+
+    <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript">
+
+
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw-assets.js', {
+          scope: './'
+        });
+
+        if (navigator.serviceWorker.controller) {
+            document.querySelector('#testMsg').addEventListener('click', function() {
+              console.log("WHATEER");
+              sendMessage({
+                command: 'add',
+                mdContent: '# heyThere'
+              }).then(function() {
+                // If the promise resolves, just display a success message.
+                console.log("Success message!");
+              }).catch(function(err) {
+                console.log("ERR! ", err);
+              }); // If the promise rejects, then setStatus will be called with the error.
+            });
+        }
+      }
+
+      console.log('Nav: ', navigator);
+
+
+
+      function sendMessage(message) {
+        // This wraps the message posting/response in a promise, which will resolve if the response doesn't
+        // contain an error, and reject with the error if it does. If you'd prefer, it's possible to call
+        // controller.postMessage() and set up the onmessage handler independently of a promise, but this is
+        // a convenient wrapper.
+        return new Promise(function(resolve, reject) {
+          var messageChannel = new MessageChannel();
+          messageChannel.port1.onmessage = function(event) {
+            if (event.data.error) {
+              reject(event.data.error);
+            } else {
+              resolve(event.data);
+            }
+          };
+
+          // This sends the message data as well as transferring messageChannel.port2 to the service worker.
+          // The service worker can then use the transferred port to reply via postMessage(), which
+          // will in turn trigger the onmessage handler on messageChannel.port1.
+          // See https://html.spec.whatwg.org/multipage/workers.html#dom-worker-postmessage
+          navigator.serviceWorker.controller.postMessage(message, [messageChannel.port2]);
+        });
+      }
+
+      // In the following line, you should include the prefixes of implementations you want to test.
+      window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+      // DON'T use "var indexedDB = ..." if you're not in a function.
+      // Moreover, you may need references to some window.IDB* objects:
+      window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+      window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+      // (Mozilla has never prefixed these objects, so we don't need window.mozIDB*)
+
+
+      // Let us open our database
+      var DBOpenRequest = window.indexedDB.open("markdownHistory", 1);
+       
+      // Gecko-only IndexedDB temp storage option:
+      // var request = window.indexedDB.open("markdownHistory", {version: 4, storage: "temporary"});
+
+      // these two event handlers act on the database being opened successfully, or not
+      DBOpenRequest.onerror = function(event) {
+        console.log("Error opening db");
+      };
+      
+      DBOpenRequest.onsuccess = function(event) {
+        console.log("DB Initialized");
+        
+        // store the result of opening the database in the db variable. This is used a lot below
+        db = DBOpenRequest.result;
+        
+        // Run the displayData() function to populate the task list with all the to-do list data already in the IDB
+        showDbRecords();
+      };
+
+      // This event handles the event whereby a new version of the database needs to be created
+      // Either one has not been created before, or a new version number has been submitted via the
+      // window.indexedDB.open line above
+      //it is only implemented in recent browsers
+      DBOpenRequest.onupgradeneeded = function(event) { 
+        var db = event.target.result;
+        
+        db.onerror = function(event) {
+          console.log('Error loading database.');
+        };
+
+        // Create an objectStore for this database
+        
+        var objectStore = db.createObjectStore("markdownHistory", { keyPath: "mdFileName" });
+        
+        // define what data items the objectStore will contain
+        
+        objectStore.createIndex("authorName", "authorName", { unique: false });
+        
+        console.log('Object store created.');
+      };
+
+
+      function showDbRecords() {
+        // Open our object store and then get a cursor list of all the different data items in the IDB to iterate through
+        var objectStore = db.transaction('markdownHistory').objectStore('markdownHistory');
+        objectStore.openCursor().onsuccess = function(event) {
+          var cursor = event.target.result;
+            // if there is still another cursor to go, keep runing this code
+            if (cursor) {
+              console.log("IndexedDB Record: ", cursor.value.mdFileName + ' by ' + cursor.value.authorName);
+              // continue on to the next item in the cursor
+              cursor.continue();
+            
+            // if there are no more cursor items to iterate through, say so, and exit the function 
+            } else {
+              console.log("No More IndexedDB Records");
+            }
+          }
+      }
+
+
+
+    </script>
+    <script type="text/javascript" src="logging.js"></script>
+  </body>
+</html>
