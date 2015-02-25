@@ -30,10 +30,13 @@ self.addEventListener('message', function(event) {
   // If we're just updating the live preview, send the converted
   // HTML result back to the page to populate the preview div
   if (event.data.command === 'updatePreview') {
-    event.ports[0].postMessage({
+    self.clients.matchAll().then(function(client) { 
+      client[0].postMessage({
+        command: 'updatePreview',
         error: null,
         htmlResult: result
       });
+    });
   }
 
   // If we want to save the current version, add a new record

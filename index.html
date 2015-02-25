@@ -74,32 +74,28 @@
           sendMessage({
             command: 'updatePreview',
             mdContent: evt.currentTarget.value
-          }).then(function(data) {
-            document.querySelector('#html-preview').innerHTML = data.htmlResult;
+          });
         });
-      });
+      };
+
+      function updatePreview(data) {
+        document.querySelector('#html-preview').innerHTML = data.htmlResult;
       };
 
       // Adds click handler to submit button and prepares
       // to send a message to our service worker with the
       // current markdown
       // function submitMarkdown() {
-      //   console.log("Adding click event...");
         if (navigator.serviceWorker.controller) {
           console.log("Controller found");
-            document.querySelector('#submit-markdown').addEventListener('click', function() {
-              console.log("Clicked save button...");
-              sendMessage({
-                command: 'saveToIndexedDB',
-                mdContent: document.querySelector('#live-markdown').value
-              }).then(function() {
-                console.log("Success message!");
-              }).catch(function(err) {
-                console.log("ERR! ", err);
-              }); // If the promise rejects, then setStatus will be called with the error.
+          document.querySelector('#submit-markdown').addEventListener('click', function() {
+            console.log("Clicked save button...");
+            sendMessage({
+              command: 'saveToIndexedDB',
+              mdContent: document.querySelector('#live-markdown').value
             });
+          });
         }
-      // }
 
 
       // Check for Service Workers and register sw-assets
@@ -112,37 +108,20 @@
       }
 
       function sendMessage(message) {
-        var message = message;
-        // This wraps the message posting/response in a promise, which will resolve if the response doesn't
-        // contain an error, and reject with the error if it does. If you'd prefer, it's possible to call
-        // controller.postMessage() and set up the onmessage handler independently of a promise, but this is
-        // a convenient wrapper.
-        return new Promise(function(resolve, reject) {
-          var messageChannel = new MessageChannel();
-          messageChannel.port1.onmessage = function(event) {
-            if (event.data.error) {
-              reject(event.data.error);
-            } else {
-              resolve(event.data);
-            }
-          };
+        // navigator.serviceWorker.getRegistration().then(function(reg) {
+        //   reg.active.postMessage(message);
+        // });
 
-
-          // navigator.serviceWorker.getRegistration().then(function(reg) {
-          //   reg.active.postMessage(message);
-          // });
-
-          console.log("ServiceWorker Controller State: " + navigator.serviceWorker.controller.state);
-
-          // Send port with Chrome so our service worker can respond to our message
-          if (navigator.userAgent.indexOf('Chrome') !== -1) {
-            navigator.serviceWorker.controller.postMessage(message, [messageChannel.port2]);
-          }
-          else {
-            navigator.serviceWorker.controller.postMessage(message);
-          }
-        });
+        console.log("ServiceWorker Controller State: " + navigator.serviceWorker.controller.state);
+        navigator.serviceWorker.controller.postMessage(message);
       }
+
+      // Listen for messages from our service worker so we can update the HTML preview div
+      window.addEventListener('message', function(message) {
+        if (message.data.command = "updatePreview") {
+          updatePreview(message.data);
+        }
+      });
 
       setupIndexedDB();
     </script>
