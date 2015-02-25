@@ -28,13 +28,14 @@ p { font-size: 13px; max-width: 900px; line-height: 16px; color: #444; }
     background-color: #49AFB7;
 }
 
-#live-markdown, #html-preview {
+#live-markdown, #html-preview, .half {
     display: inline-block;
     width: 45%;
     height: 250px;
     margin-bottom: 15px;
 }
 
+.half { height: auto; text-align: center; }
 #html-preview {
     border: 1px solid #aaa;
     background-color: #eee;
