@@ -12,7 +12,7 @@
   <body>
     <h1>Markdown Previewer</h1>
     <p><b>Quick overview:</b></p>
-    <p>When you type markdown syntax in the texarea, we use postMessage to send a message to our service worker with the textarea's value. If the service worker can respond, (i.e. message ports are implemented), it will return the HTML-version of your entered markdown and display it in the div on the right.</p>
+    <p>When you type markdown syntax in the texarea, we use postMessage to send a message to our service worker with the textarea's value. (about:config dom.messageChannel.enabled = true) If the service worker can respond, (i.e. message ports are implemented), it will return the HTML-version of your entered markdown and display it in the div on the right.</p>
     <p>When you click the save button, we again send a message to our service worker to have it save the current HTML-version in an IndexedDB record</p>
     <h4>You Have <span class='counter'></span> Markdown Record in IndexedDB</h4>
     <textarea id="live-markdown" width="400" height="200"></textarea>
