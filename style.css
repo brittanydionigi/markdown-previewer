@@ -1,14 +1,14 @@
 body {
   font-family: 'Helvetica', 'Arial', sans-serif;
-  font-weight: 400;
+  font-weight: 500;
   margin: 2% 5%;
 }
 
-h2 {
-  font-weight: 400;
+h4 {
+  font-weight: 300;
 }
 
-h2 span.counter {
+h4 span.counter {
   font-weight: 700;
 }
 

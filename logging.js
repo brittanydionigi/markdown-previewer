@@ -2,27 +2,13 @@ if (!navigator.serviceWorker.controller) {
   console.log("This page is not controlled by a ServiceWorker");
 }
 else {
-  console.log("This page is controlled by a ServiceWorker");
+  console.log("This page is controlled by a ServiceWorker! State: " + navigator.serviceWorker.controller.state);
 }
 
 navigator.serviceWorker.getRegistration().then(function(reg) {
   function showWaitingMessage() {
     console.log("A new ServiceWorker is waiting to become active. It can't become active now because pages are still open that are controlled by the older version. Either close those tabs, or shift+reload them (which loads them without the ServiceWorker). That will allow the new version to become active, so it'll be used for the next page load.");
   }
-
-  reg.addEventListener('message', function(e) {
-    console.log("GOT A MESSAEG!");
-  });
-
-  reg.addEventListener('onmessage', function(e) {
-    console.log("GOT A MESSAEG! ON");
-  });
-
-  reg.addEventListener('postmessage', function(e) {
-    console.log("GOT A MESSAEG! POST ");
-  });
-  
-  
   
   reg.addEventListener('updatefound', function() {
     console.log("Found a new ServiceWorker!");
