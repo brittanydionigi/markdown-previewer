@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="SW Implementation">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SW Markdown Previewer</title>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+  </head>
+
+  <body>
+    <h1>Markdown Previewer</h1>
+    <p><b>Quick overview:</b></p>
+    <p>When you type markdown syntax in the texarea, we use postMessage to send a message to our service worker with the textarea's value. (about:config dom.messageChannel.enabled = true) If the service worker can respond, (i.e. message ports are implemented), it will return the HTML-version of your entered markdown and display it in the div on the right.</p>
+    <p>When you click the save button, we again send a message to our service worker to have it save the current HTML-version in an IndexedDB record</p>
+    <h4>You Have <span class='counter'></span> Markdown Record in IndexedDB</h4><br />
+    <div class="half">Type Markdown Here:</div>
+    <div class="half">See HTML Preview Here:</div>
+    <textarea id="live-markdown" width="400" height="200"></textarea>
+    <div id="html-preview"></div>
+    <div id='submit-markdown'>Save to IndexedDB</div>
+    
+    <script type="text/javascript" src="markdown-it.js"></script>
+    <script type="text/javascript">
+
+      // IndexedDB Setup
+      const DB_NAME = 'mdFileHistory';
+      const DB_VERSION = 2;
+      const DB_STORE_NAME = 'mdFiles';
+
+      var db;
+
+      // Set up our IndexedDB Database
+      function setupIndexedDB() {
+        console.log("Opening DB...");
+        var req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onsuccess = function (evt) {
+          console.log("DB opened successfully");
+          db = this.result;
+          logDbRecords();
+        };
+        req.onerror = function (evt) {
+          console.error("DB could not open:", evt);
+        };
+        req.onupgradeneeded = function (evt) {
+          var store = evt.currentTarget.result.createObjectStore(
+            DB_STORE_NAME, { keyPath: 'id', autoIncrement: true });
+
+          store.createIndex('authorName', 'authorName', { unique: false });
+          store.createIndex('fileName', 'fileName', { unique: true });
+          store.createIndex('htmlContent', 'htmlContent', { unique: false });
+        };
+      };
+
+
+      // Cycle through IndexedDB Records and log values to the console
+      function logDbRecords() {
+        var objectStore = db.transaction(DB_STORE_NAME, 'readwrite').objectStore(DB_STORE_NAME);
+        var fileNameIndex = objectStore.index('fileName');
+        var mdFilesCount = fileNameIndex.count();
+        objectStore.openCursor().onsuccess = function(event) {
+          var cursor = event.target.result;
+          if (cursor) {
+            console.log("IndexedDB Record: ", cursor.value.fileName + ' by ' + cursor.value.authorName);
+            cursor.continue();
+          } else {
+            // When we've iterated through all the records, display the # of records in span.counter
+            document.querySelector('.counter').textContent = mdFilesCount.result;
+          }
+        }
+      }
+
+
+
+
+      // Send a message to our web worker whenever 'keyup' is fired
+      function initiatePreview() {
+        document.querySelector('#live-markdown').addEventListener('keyup', function(evt) {
+          sendMessage({
+            command: 'updatePreview',
+            mdContent: evt.currentTarget.value
+          });
+        });
+      };
+
+      // Update the HTML preview div
+      function updatePreview(htmlResult) {
+        document.querySelector('#html-preview').innerHTML = htmlResult;
+      };
+
+
+
+
+      // Adds click handler to submit button and prepares to send
+      // a message to our service worker with the current markdown
+      function enableSubmitButton() {
+        if (navigator.serviceWorker.controller.state) {
+          console.log("Service Worker Controller found, enabling submit button...");
+          document.querySelector('#submit-markdown').addEventListener('click', function() {
+            console.log("Clicked save button. Preparing to send data to service worker...");
+            sendMessage({
+              command: 'saveToIndexedDB',
+              mdContent: document.querySelector('#live-markdown').value
+            });
+          });
+        }
+      };
+
+
+
+
+      function sendMessage(message) {
+        // navigator.serviceWorker.getRegistration().then(function(reg) {
+        //   reg.active.postMessage(message);
+        // });
+        if (message.command === 'saveToIndexedDB') {
+          navigator.serviceWorker.controller.postMessage('hello');
+        } else {
+          previewWorker.postMessage(message);
+        }
+      }
+
+      // Listen for messages from our service worker so we can update the HTML preview div
+      window.addEventListener('message', function(message) {
+        alert("HELLO THERE");
+        // console.log("Message Listener on Window from SW: ", message.data);
+      });
+
+
+      // Check for Service Workers and register service worker script
+      function registerServiceWorker(workerFile) {
+        console.log("Checking for service workers...");
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('sw-assets.js', {
+            scope: './'
+          }).then(function(reg) {
+            console.log("Service Worker Successfully Registered");
+            enableSubmitButton();
+          });
+        }
+      }
+
+      var previewWorker;
+      function registerWebWorker(workerFile) {
+        if (typeof(Worker) !== "undefined") {
+            if (typeof(previewWorker) === "undefined") {
+              previewWorker = new Worker(workerFile);
+              previewWorker.onmessage = function(event) {
+                updatePreview(event.data.htmlResult);
+              }
+              initiatePreview();
+            }
+        } else {
+          console.log("No web worker support :(");
+        }
+      }
+
+
+
+      registerServiceWorker('sw-assets.js');
+      registerWebWorker('sync-live-preview.js');
+      // setupIndexedDB();
+
+    </script>
+    <script type="text/javascript" src="logging.js"></script>
+  </body>
+</html>
