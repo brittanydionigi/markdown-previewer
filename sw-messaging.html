@@ -24,60 +24,12 @@
     <script type="text/javascript" src="markdown-it.js"></script>
     <script type="text/javascript">
 
-      // IndexedDB Setup
-      const DB_NAME = 'mdFileHistory';
-      const DB_VERSION = 2;
-      const DB_STORE_NAME = 'mdFiles';
-
-      var db;
-
-      // Set up our IndexedDB Database
-      function setupIndexedDB() {
-        console.log("Opening DB...");
-        var req = indexedDB.open(DB_NAME, DB_VERSION);
-        req.onsuccess = function (evt) {
-          console.log("DB opened successfully");
-          db = this.result;
-          logDbRecords();
-        };
-        req.onerror = function (evt) {
-          console.error("DB could not open:", evt);
-        };
-        req.onupgradeneeded = function (evt) {
-          var store = evt.currentTarget.result.createObjectStore(
-            DB_STORE_NAME, { keyPath: 'id', autoIncrement: true });
-
-          store.createIndex('authorName', 'authorName', { unique: false });
-          store.createIndex('fileName', 'fileName', { unique: true });
-          store.createIndex('htmlContent', 'htmlContent', { unique: false });
-        };
-      };
-
-
-      // Cycle through IndexedDB Records and log values to the console
-      function logDbRecords() {
-        var objectStore = db.transaction(DB_STORE_NAME, 'readwrite').objectStore(DB_STORE_NAME);
-        var fileNameIndex = objectStore.index('fileName');
-        var mdFilesCount = fileNameIndex.count();
-        objectStore.openCursor().onsuccess = function(event) {
-          var cursor = event.target.result;
-          if (cursor) {
-            console.log("IndexedDB Record: ", cursor.value.fileName + ' by ' + cursor.value.authorName);
-            cursor.continue();
-          } else {
-            // When we've iterated through all the records, display the # of records in span.counter
-            document.querySelector('.counter').textContent = mdFilesCount.result;
-          }
-        }
-      }
-
-
-
 
       // Send a message to our web worker whenever 'keyup' is fired
       function initiatePreview() {
         document.querySelector('#live-markdown').addEventListener('keyup', function(evt) {
           sendMessage({
+            recipient: 'webWorker',
             command: 'updatePreview',
             mdContent: evt.currentTarget.value
           });
@@ -100,6 +52,7 @@
           document.querySelector('#submit-markdown').addEventListener('click', function() {
             console.log("Clicked save button. Preparing to send data to service worker...");
             sendMessage({
+              recipient: 'serviceWorker',
               command: 'saveToIndexedDB',
               mdContent: document.querySelector('#live-markdown').value
             });
@@ -111,20 +64,16 @@
 
 
       function sendMessage(message) {
-        // navigator.serviceWorker.getRegistration().then(function(reg) {
-        //   reg.active.postMessage(message);
-        // });
-        if (message.command === 'saveToIndexedDB') {
+        if (message.recipient === 'serviceWorker') {
           navigator.serviceWorker.controller.postMessage('hello');
         } else {
           previewWorker.postMessage(message);
         }
       }
 
-      // Listen for messages from our service worker so we can update the HTML preview div
+      // Listen for messages from our service worker
       window.addEventListener('message', function(message) {
-        alert("HELLO THERE");
-        // console.log("Message Listener on Window from SW: ", message.data);
+        console.log("Message Listener on Window from SW: ", message.data);
       });
 
 
@@ -141,6 +90,7 @@
         }
       }
 
+      // Set up web worker to handle markdown conversion to HTML
       var previewWorker;
       function registerWebWorker(workerFile) {
         if (typeof(Worker) !== "undefined") {
@@ -158,9 +108,8 @@
 
 
 
-      registerServiceWorker('sw-assets.js');
+      registerServiceWorker('service-worker.js');
       registerWebWorker('sync-live-preview.js');
-      // setupIndexedDB();
 
     </script>
     <script type="text/javascript" src="logging.js"></script>
