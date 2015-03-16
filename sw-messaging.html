@@ -12,7 +12,7 @@
   <body>
     <h1>Markdown Previewer</h1>
     <p><b>Quick overview:</b></p>
-    <p>Type markdown in the textarea on the left. Web worker shows HTML preview on the right. Submit button sends a message to a service worker (intending to have service worker save current markdown to indexedDB). Service worker should handle the message event and send a message back to the page.
+    <p>Type markdown in the textarea on the left. Web worker shows HTML preview on the right. Submit button sends a message to a service worker (intending to have service worker save current markdown to indexedDB). Service worker should handle the message event and send a message back to the page. (This message is currently just being logged to the console as 'Message from Service Worker: [message]')
     <div class="half">Type Markdown Here:</div>
     <div class="half">See HTML Preview Here:</div>
     <textarea id="live-markdown" width="400" height="200"></textarea>
@@ -71,7 +71,7 @@
 
       // Listen for messages from our service worker
       window.addEventListener('message', function(message) {
-        console.log("Message Listener on Window from SW: ", message.data);
+        console.log("Message from Service Worker: ", message.data);
       });
 
 
