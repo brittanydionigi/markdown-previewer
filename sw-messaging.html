@@ -81,7 +81,7 @@
       function registerServiceWorker(workerFile) {
         console.log("Checking for service workers...");
         if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('sw-assets.js', {
+          navigator.serviceWorker.register(workerFile, {
             scope: './'
           }).then(function(reg) {
             console.log("Service Worker Successfully Registered");
