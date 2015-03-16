@@ -95,7 +95,7 @@
       // Adds click handler to submit button and prepares to send
       // a message to our service worker with the current markdown
       function enableSubmitButton() {
-        if (navigator.serviceWorker.controller.state) {
+        if (navigator.serviceWorker.controller) {
           console.log("Service Worker Controller found, enabling submit button...");
           document.querySelector('#submit-markdown').addEventListener('click', function() {
             console.log("Clicked save button. Preparing to send data to service worker...");
