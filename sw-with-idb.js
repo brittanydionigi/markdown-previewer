@@ -91,7 +91,7 @@ self.addEventListener('message', function(event) {
     //       });
     //     });
     //   }
-    // };
+    };
 
     dbReq.onerror = function(event) {
       swContext.clients.matchAll().then(function(client) {
