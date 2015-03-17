@@ -121,8 +121,12 @@
       }
 
       // Listen for messages from our service worker
-      navigator.serviceWorker.addEventListener('message', function(message) {
-       console.log("Message from Service Worker: ", message.data);
+    navigator.serviceWorker.addEventListener('message', function(message) {
+       console.log("Message from Service Worker (nav.sw): ", message.data);
+     });
+
+      window.addEventListener('message', function(message) {
+       console.log("Message from Service Worker (Window): ", message.data);
      });
 
 
