@@ -53,9 +53,23 @@ self.addEventListener('message', function(event) {
 
       transaction.oncomplete = function() {
         console.log("Transaction completed!");
+        swContext.clients.matchAll().then(function(client) {
+          client[0].postMessage({
+            command: 'logMessage',
+            error: null,
+            message: event
+          });
+        });
       }
       transaction.onerror = function() {
         console.log("Transaction error! ", transaction.error);
+        swContext.clients.matchAll().then(function(client) {
+          client[0].postMessage({
+            command: 'logMessage',
+            error: null,
+            message: event
+          });
+        });
       }
 
       var objectStore = transaction.objectStore("mdFiles");
@@ -67,6 +81,13 @@ self.addEventListener('message', function(event) {
 
       objectStoreReq.onsuccess = function(event) {
         console.log("Object store item added!");
+        swContext.clients.matchAll().then(function(client) {
+          client[0].postMessage({
+            command: 'logMessage',
+            error: null,
+            message: event
+          });
+        });
       }
     };
 
@@ -75,7 +96,7 @@ self.addEventListener('message', function(event) {
         client[0].postMessage({
           command: 'logMessage',
           error: null,
-          message: event
+          message: 'db not opened from sw: ' + JSON.stringify(event)
         });
       });
     };
