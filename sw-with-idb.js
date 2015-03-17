@@ -51,47 +51,47 @@ self.addEventListener('message', function(event) {
         });
       });
       var db = event.target.result;
-      var transaction = db.transaction(['mdFiles'], 'readwrite');
+      // var transaction = db.transaction(['mdFiles'], 'readwrite');
 
-      transaction.oncomplete = function(event) {
-        console.log("Transaction completed!");
-        swContext.clients.matchAll().then(function(client) {
-          client[0].postMessage({
-            command: 'logMessage',
-            error: null,
-            message: 'rawr transaction complete'
-          });
-        });
-      }
-      transaction.onerror = function(event) {
-        console.log("Transaction error! ", transaction.error);
-        swContext.clients.matchAll().then(function(client) {
-          client[0].postMessage({
-            command: 'logMessage',
-            error: null,
-            message: event
-          });
-        });
-      }
+    //   transaction.oncomplete = function(event) {
+    //     console.log("Transaction completed!");
+    //     swContext.clients.matchAll().then(function(client) {
+    //       client[0].postMessage({
+    //         command: 'logMessage',
+    //         error: null,
+    //         message: 'rawr transaction complete'
+    //       });
+    //     });
+    //   }
+    //   transaction.onerror = function(event) {
+    //     console.log("Transaction error! ", transaction.error);
+    //     swContext.clients.matchAll().then(function(client) {
+    //       client[0].postMessage({
+    //         command: 'logMessage',
+    //         error: null,
+    //         message: event
+    //       });
+    //     });
+    //   }
 
-      var objectStore = transaction.objectStore("mdFiles");
-      var objectStoreReq = objectStore.add({ 
-        fileName: 'YOWHATUP-' + Date.now(),
-        authorName: 'brittany',
-        htmlContent: result
-      });
+    //   var objectStore = transaction.objectStore("mdFiles");
+    //   var objectStoreReq = objectStore.add({ 
+    //     fileName: 'YOWHATUP-' + Date.now(),
+    //     authorName: 'brittany',
+    //     htmlContent: result
+    //   });
 
-      objectStoreReq.onsuccess = function(event) {
-        console.log("Object store item added!");
-        swContext.clients.matchAll().then(function(client) {
-          console.log("Hello? ", client);
-          client[0].postMessage({
-            command: 'logMessage',
-            message: 'hello there'
-          });
-        });
-      }
-    };
+    //   objectStoreReq.onsuccess = function(event) {
+    //     console.log("Object store item added!");
+    //     swContext.clients.matchAll().then(function(client) {
+    //       console.log("Hello? ", client);
+    //       client[0].postMessage({
+    //         command: 'logMessage',
+    //         message: 'hello there'
+    //       });
+    //     });
+    //   }
+    // };
 
     dbReq.onerror = function(event) {
       swContext.clients.matchAll().then(function(client) {
