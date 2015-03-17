@@ -120,11 +120,10 @@
         }
       }
 
-      // Listen for messages from our service worker so we can update the HTML preview div
-      window.addEventListener('message', function(message) {
-        alert("HELLO THERE");
-        // console.log("Message Listener on Window from SW: ", message.data);
-      });
+      // Listen for messages from our service worker
+      navigator.serviceWorker.addEventListener('message', function(message) {
+       console.log("Message from Service Worker: ", message.data);
+     });
 
 
       // Check for Service Workers and register service worker script
