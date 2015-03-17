@@ -22,7 +22,7 @@ self.addEventListener('fetch', function(event) {
 
 
 self.addEventListener('message', function(event) {
-  console.log("Command: ", event.data.command);
+  console.log("Command: ", event);
   var cmd = event.data.command;
   self.clients.matchAll().then(function(client) {
     client[0].postMessage({
