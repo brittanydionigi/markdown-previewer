@@ -22,11 +22,13 @@ self.addEventListener('fetch', function(event) {
 
 
 self.addEventListener('message', function(event) {
+  console.log("Command: ", event.data.command);
+  var cmd = event.data.command;
   self.clients.matchAll().then(function(client) {
     client[0].postMessage({
       command: 'logMessage',
       error: null,
-      message: 'hi there message here!!!' + event.data.command
+      message: 'hi there message here!!!' + cmd
     });
   });
 
@@ -36,7 +38,7 @@ self.addEventListener('message', function(event) {
 
   // If we want to save the current version, add a new record
   // in our mdFileHistory database 
-  if (event.data.command === 'saveToIndexedDB') {
+  if (cmd === 'saveToIndexedDB') {
       swContext.clients.matchAll().then(function(client) {
         client[0].postMessage({
           command: 'logMessage',
