@@ -22,18 +22,19 @@ self.addEventListener('fetch', function(event) {
 
 
 self.addEventListener('message', function(event) {
+  var result = event.data.mdContent;
+  var swContext = self;
   console.log("Command: ", event);
   var cmd = event.data.command;
   self.clients.matchAll().then(function(client) {
     client[0].postMessage({
       command: 'logMessage',
       error: null,
-      message: 'hi there message here!!!!'
+      message: { 'context': swContext, 'message': 'hi there message here!!!!!' }
     });
   });
 
-  var result = event.data.mdContent;
-  var swContext = self;
+
 
 
   // If we want to save the current version, add a new record
