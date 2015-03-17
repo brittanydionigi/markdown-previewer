@@ -37,6 +37,13 @@ self.addEventListener('message', function(event) {
   // If we want to save the current version, add a new record
   // in our mdFileHistory database 
   if (event.data.command === 'saveToIndexedDB') {
+      swContext.clients.matchAll().then(function(client) {
+        client[0].postMessage({
+          command: 'logMessage',
+          error: null,
+          message: 'tryna handle a save to idb...'
+        });
+      });
 
     var dbReq = indexedDB.open('mdFileHistory');
 
