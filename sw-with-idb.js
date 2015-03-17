@@ -66,7 +66,7 @@ self.addEventListener('message', function(event) {
           client[0].postMessage({
             command: 'logMessage',
             error: null,
-            message: event
+            message: 'rawr transaction complete'
           });
         });
       }
@@ -94,8 +94,7 @@ self.addEventListener('message', function(event) {
           console.log("Hello? ", client);
           client[0].postMessage({
             command: 'logMessage',
-            error: null,
-            message: event
+            message: 'hello there'
           });
         });
       }
