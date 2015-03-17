@@ -24,7 +24,7 @@ self.addEventListener('fetch', function(event) {
 self.addEventListener('message', function(event) {
   self.clients.matchAll().then(function(client) {
     client[0].postMessage({
-      message: 'hi there message here!!'
+      message: 'hi there message here!!!'
     });
   });
 });
