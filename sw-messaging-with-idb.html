@@ -114,7 +114,7 @@
         //   reg.active.postMessage(message);
         // });
         if (message.command === 'saveToIndexedDB') {
-          navigator.serviceWorker.controller.postMessage('hello');
+          navigator.serviceWorker.controller.postMessage(message);
         } else {
           previewWorker.postMessage(message);
         }
