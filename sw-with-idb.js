@@ -60,7 +60,7 @@ self.addEventListener('message', function(event) {
       var db = event.target.result;
       var transaction = db.transaction(['mdFiles'], 'readwrite');
 
-      transaction.oncomplete = function() {
+      transaction.oncomplete = function(event) {
         console.log("Transaction completed!");
         swContext.clients.matchAll().then(function(client) {
           client[0].postMessage({
@@ -70,7 +70,7 @@ self.addEventListener('message', function(event) {
           });
         });
       }
-      transaction.onerror = function() {
+      transaction.onerror = function(event) {
         console.log("Transaction error! ", transaction.error);
         swContext.clients.matchAll().then(function(client) {
           client[0].postMessage({
@@ -91,6 +91,7 @@ self.addEventListener('message', function(event) {
       objectStoreReq.onsuccess = function(event) {
         console.log("Object store item added!");
         swContext.clients.matchAll().then(function(client) {
+          console.log("Hello? ", client);
           client[0].postMessage({
             command: 'logMessage',
             error: null,
