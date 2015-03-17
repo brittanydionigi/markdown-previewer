@@ -1,15 +1,15 @@
-importScripts('serviceworker-cache-polyfill.js');
+// importScripts('serviceworker-cache-polyfill.js');
 
-self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open('assets-v14').then(function(cache) {
-      return cache.addAll([
-        'style.css',
-        'markdown-it.js'
-      ]);
-    })
-  );
-});
+// self.addEventListener('install', function(event) {
+//   event.waitUntil(
+//     caches.open('assets-v14').then(function(cache) {
+//       return cache.addAll([
+//         'style.css',
+//         'markdown-it.js'
+//       ]);
+//     })
+//   );
+// });
 
 
 self.addEventListener('fetch', function(event) {
@@ -28,7 +28,7 @@ self.addEventListener('message', function(event) {
     client[0].postMessage({
       command: 'logMessage',
       error: null,
-      message: 'hi there message here!!!' + cmd
+      message: 'hi there message here!!!'
     });
   });
 
@@ -39,14 +39,6 @@ self.addEventListener('message', function(event) {
   // If we want to save the current version, add a new record
   // in our mdFileHistory database 
   if (cmd === 'saveToIndexedDB') {
-      swContext.clients.matchAll().then(function(client) {
-        client[0].postMessage({
-          command: 'logMessage',
-          error: null,
-          message: 'tryna handle a save to idb...'
-        });
-      });
-
     var dbReq = indexedDB.open('mdFileHistory');
 
     dbReq.onsuccess = function(event) {
@@ -105,7 +97,7 @@ self.addEventListener('message', function(event) {
         client[0].postMessage({
           command: 'logMessage',
           error: null,
-          message: 'db not opened from sw: ' + JSON.stringify(event)
+          message: 'db not opened from sw'
         });
       });
     };
