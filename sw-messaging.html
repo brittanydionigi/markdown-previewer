@@ -70,11 +70,9 @@
       }
 
       // Listen for messages from our service worker
-      window.addEventListener('message', function(message) {
-        navigator.serviceWorker.addEventListener('message', function(message) {
-         console.log("Message from Service Worker: ", message.data);
-       });
-      });
+      navigator.serviceWorker.addEventListener('message', function(message) {
+       console.log("Message from Service Worker: ", message.data);
+     });
 
 
       // Check for Service Workers and register service worker script
