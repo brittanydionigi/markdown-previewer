@@ -1,15 +1,15 @@
-// importScripts('serviceworker-cache-polyfill.js');
+importScripts('serviceworker-cache-polyfill.js');
 
-// self.addEventListener('install', function(event) {
-//   event.waitUntil(
-//     caches.open('assets-v14').then(function(cache) {
-//       return cache.addAll([
-//         'style.css',
-//         'markdown-it.js'
-//       ]);
-//     })
-//   );
-// });
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    caches.open('assets-v14').then(function(cache) {
+      return cache.addAll([
+        'style.css',
+        'markdown-it.js'
+      ]);
+    })
+  );
+});
 
 
 self.addEventListener('fetch', function(event) {
