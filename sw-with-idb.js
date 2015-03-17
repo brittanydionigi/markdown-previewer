@@ -26,7 +26,7 @@ self.addEventListener('message', function(event) {
     client[0].postMessage({
       command: 'logMessage',
       error: null,
-      message: 'hi there message here!!!'
+      message: 'hi there message here!!!' + event.data.command
     });
   });
 
