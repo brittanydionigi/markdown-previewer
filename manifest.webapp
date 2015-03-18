@@ -19,10 +19,5 @@
     "launch_path": "/markdown-previewer/sw-messaging/index.html",
     "installs_allowed_from": ["https://marketplace.firefox.com", "*"],
     "type": "privileged",
-    "messages": [
-       { "push": "/index.html"},
-       { "push-register": "/index.html"}
-    ],
-    "permissions": {
-    }
+    "permissions": {}
 }
