@@ -1,12 +1,12 @@
-importScripts('serviceworker-cache-polyfill.js');
+importScripts('../lib/serviceworker-cache-polyfill.js');
 
 
 self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open('assets-v14').then(function(cache) {
       return cache.addAll([
-        'style.css',
-        'markdown-it.js'
+        '../css/style.css',
+        '../lib/markdown-it.js'
       ]);
     })
   );
@@ -28,16 +28,7 @@ self.addEventListener('message', function(event) {
   var result = event.data.mdContent;
   var cmd = event.data.command;
 
-  swContext.clients.matchAll().then(function(client) {
-    client[0].postMessage({
-      command: 'logMessage',
-      error: null,
-      message: 'hi there message here.'
-    });
-  });
-
-
-
+  console.log("HELLO: ", cmd, result);
 
   // If we want to save the current version, add a new record
   // in our mdFileHistory database 
@@ -45,8 +36,7 @@ self.addEventListener('message', function(event) {
     self.clients.matchAll().then(function(client) {
       client[0].postMessage({
         command: 'logMessage',
-        error: null,
-        message: 'Trying to save to indexedDB...'
+        message: 'Service Worker received message. Trying to save to IndexedDB...'
       });
     });
 
@@ -56,8 +46,7 @@ self.addEventListener('message', function(event) {
       swContext.clients.matchAll().then(function(client) {
         client[0].postMessage({
           command: 'logMessage',
-          error: null,
-          message: 'db opened from service worker'
+          message: 'DB opened from service worker'
         });
       });
       
@@ -68,7 +57,6 @@ self.addEventListener('message', function(event) {
         swContext.clients.matchAll().then(function(client) {
           client[0].postMessage({
             command: 'logMessage',
-            error: null,
             message: 'transaction success'
           });
         });
@@ -77,20 +65,23 @@ self.addEventListener('message', function(event) {
         swContext.clients.matchAll().then(function(client) {
           client[0].postMessage({
             command: 'logMessage',
-            error: null,
             message: 'transaction error'
           });
         });
       }
 
       var objectStore = transaction.objectStore("mdFiles");
-      var objectStoreReq = objectStore.count();
+      var objectStoreReq = objectStore.add({ 
+        fileName: 'MarkdownFileName-' + Date.now(),
+        authorName: 'Brittany Storoz',
+        markdownContent: result
+      });
 
       objectStoreReq.onsuccess = function(event) {
         swContext.clients.matchAll().then(function(client) {
           client[0].postMessage({
             command: 'logMessage',
-            message: 'objectStore req success!'
+            message: 'objectStore request succeeded'
           });
         });
       }
@@ -99,7 +90,7 @@ self.addEventListener('message', function(event) {
         swContext.clients.matchAll().then(function(client) {
           client[0].postMessage({
             command: 'logMessage',
-            message: 'objectStore req failure!'
+            message: 'objectStore request failed'
           });
         });
       };
@@ -109,8 +100,7 @@ self.addEventListener('message', function(event) {
       swContext.clients.matchAll().then(function(client) {
         client[0].postMessage({
           command: 'logMessage',
-          error: null,
-          message: 'db not opened from sw'
+          message: 'DB not opened from sw'
         });
       });
     };

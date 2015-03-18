@@ -6,15 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>SW Markdown Previewer</title>
-    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
   </head>
 
   <body>
     <h1>Markdown Previewer</h1>
-    <p><b>Quick overview:</b></p>
-    <p>When you type markdown syntax in the texarea, we use postMessage to send a message to our service worker with the textarea's value. (about:config dom.messageChannel.enabled = true) If the service worker can respond, (i.e. message ports are implemented), it will return the HTML-version of your entered markdown and display it in the div on the right.</p>
-    <p>When you click the save button, we again send a message to our service worker to have it save the current HTML-version in an IndexedDB record</p>
-    <h4>You Have <span class='counter'></span> Markdown Record in IndexedDB</h4><br />
+    <h2>Service Workers with IndexedDB Example</h2>
+    <p>Type markdown in the textarea on the left. Web worker shows HTML preview on the right. Submit button sends a message to a service worker with current markdown. Service worker should handle the message event and saves a record of the markdown in IndexedDB.</p>
+    <h4>You Have <span class='counter'></span> record(s) in IndexedDB</h4><br />
     <div class="half">Type Markdown Here:</div>
     <div class="half">See HTML Preview Here:</div>
     <textarea id="live-markdown" width="400" height="200"></textarea>
@@ -23,27 +22,25 @@
     
     <script type="text/javascript">
 
-      // IndexedDB Setup
+      // IndexedDB Variable
       const DB_NAME = 'mdFileHistory';
-      const DB_VERSION = 3;
+      const DB_VERSION = 4;
       const DB_STORE_NAME = 'mdFiles';
 
       var db;
 
       // Set up our IndexedDB Database
       function setupIndexedDB() {
-        console.log("Opening DB...");
         var req = indexedDB.open(DB_NAME, DB_VERSION);
         req.onsuccess = function (evt) {
-          console.log("DB opened successfully");
+          console.log("IndexedDB opened successfully");
           db = this.result;
           logDbRecords();
         };
         req.onerror = function (evt) {
-          console.error("DB could not open:", evt);
+          console.error("DB could not open: ", evt);
         };
         req.onupgradeneeded = function (evt) {
-          console.log("DB Upgrade Needed");
           var dataB = evt.target.result;
 
           if (dataB.objectStoreNames.contains(DB_STORE_NAME)) {
@@ -55,7 +52,7 @@
 
           store.createIndex('authorName', 'authorName', { unique: false });
           store.createIndex('fileName', 'fileName', { unique: true });
-          store.createIndex('htmlContent', 'htmlContent', { unique: false });
+          store.createIndex('markdownContent', 'markdownContent', { unique: false });
         };
       };
 
@@ -120,18 +117,20 @@
 
       function sendMessage(message) {
         if (message.recipient === 'serviceWorker') {
-          navigator.serviceWorker.controller.postMessage('hello');
+          navigator.serviceWorker.controller.postMessage(message);
         } else {
           previewWorker.postMessage(message);
         }
       }
 
-      // Listen for messages from our service worker [FF only]
+      // Listen for messages from our service worker
+      // [FF only, in-line with current spec]
       navigator.serviceWorker.addEventListener('message', function(message) {
        console.log("Message from Service Worker (nav.sw): ", message.data);
      });
 
-      // Listen for messages from our service worker [Chrome only]
+      // Listen for messages from our service worker
+      // [Chrome only, waiting for update on their implementation]
       window.addEventListener('message', function(message) {
        console.log("Message from Service Worker (Window): ", message.data);
      });
@@ -139,7 +138,6 @@
 
       // Check for Service Workers and register service worker script
       function registerServiceWorker(workerFile) {
-        console.log("Checking for service workers...");
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker.register(workerFile, {
             scope: './'
@@ -167,12 +165,12 @@
 
 
 
-      registerServiceWorker('sw-with-idb.js');
-      registerWebWorker('sync-live-preview.js');
+      registerServiceWorker('service-worker.js');
+      registerWebWorker('../scripts/sync-live-preview.js');
       setupIndexedDB();
 
     </script>
-    <script type="text/javascript" src="logging.js"></script>
-    <script type="text/javascript" src="markdown-it.js"></script>
+    <script type="text/javascript" src="../lib/logging.js"></script>
+    <script type="text/javascript" src="../lib/markdown-it.js"></script>
   </body>
 </html>
