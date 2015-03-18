@@ -127,11 +127,12 @@
         }
       }
 
-      // Listen for messages from our service worker
+      // Listen for messages from our service worker [FF only]
       navigator.serviceWorker.addEventListener('message', function(message) {
        console.log("Message from Service Worker (nav.sw): ", message.data);
      });
 
+      // Listen for messages from our service worker [Chrome only]
       window.addEventListener('message', function(message) {
        console.log("Message from Service Worker (Window): ", message.data);
      });
