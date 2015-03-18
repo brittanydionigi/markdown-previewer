@@ -10,12 +10,12 @@
         "120": "http://brittanystoroz.github.io/markdown-previewer/images/icons/icon-120.png",
         "128": "http://brittanystoroz.github.io/markdown-previewer/images/icons/icon-128.png",
         "256": "http://brittanystoroz.github.io/markdown-previewer/images/icons/icon-256.png",
-        "512": "http://brittanystoroz.github.io/markdown-previewer/images/icons/icon-512.png"
+        "512": "http://brittanystoroz.github.io/markdown-previewer/images/icons/icon- 512.png"
     },
     "developer": {
         "name": "Brittany Storoz",
         "url": "https://github.com/brittanystoroz"
     },
-    "launch_path": "/markdown-previewer/test/",
+    "launch_path": "/markdown-previewer/",
     "installs_allowed_from": ["https://marketplace.firefox.com", "*"]
 }
