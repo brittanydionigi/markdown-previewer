@@ -3,14 +3,14 @@
     "name": "Markdown Previewer",
     "description": "Markdown previewer app for Firefox OS",
     "icons": {
-        "32": "/images/icon-32.png",
-        "60": "/images/icon-60.png",
-        "64": "/images/icon-64.png",
-        "90": "/images/icon-90.png",
-        "120": "/images/icon-120.png",
-        "128": "/images/icon-128.png",
-        "256": "/images/icon-256.png",
-        "512": "/images/icon-512.png"
+        "32": "https://raw.githubusercontent.com/brittanystoroz/markdown-previewer/gh-pages/images/icons/icon-32.png",
+        "60": "https://raw.githubusercontent.com/brittanystoroz/markdown-previewer/gh-pages/images/icons/icon-60.png",
+        "64": "https://raw.githubusercontent.com/brittanystoroz/markdown-previewer/gh-pages/images/icons/icon-64.png",
+        "90": "https://raw.githubusercontent.com/brittanystoroz/markdown-previewer/gh-pages/images/icons/icon-90.png",
+        "120": "https://raw.githubusercontent.com/brittanystoroz/markdown-previewer/gh-pages/images/icons/icon-120.png",
+        "128": "https://raw.githubusercontent.com/brittanystoroz/markdown-previewer/gh-pages/images/icons/icon-128.png",
+        "256": "https://raw.githubusercontent.com/brittanystoroz/markdown-previewer/gh-pages/images/icons/icon-256.png",
+        "512": "https://raw.githubusercontent.com/brittanystoroz/markdown-previewer/gh-pages/images/icons/icon-512.png"
     },
     "developer": {
         "name": "Brittany Storoz",
