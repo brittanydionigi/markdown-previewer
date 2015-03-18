@@ -16,6 +16,6 @@
         "name": "Brittany Storoz",
         "url": "https://github.com/brittanystoroz"
     },
-    "launch_path": "/markdown-previewer/",
+    "launch_path": "/markdown-previewer/index.html",
     "installs_allowed_from": ["https://marketplace.firefox.com", "*"]
 }
