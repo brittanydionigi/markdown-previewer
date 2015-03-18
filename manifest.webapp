@@ -24,8 +24,5 @@
        { "push-register": "/index.html"}
     ],
     "permissions": {
-      "push": {
-        "description": "Required to send updated markdown to service worker",  
-      }
-}
+    }
 }

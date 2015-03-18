@@ -1,4 +1,4 @@
-importScripts('markdown-it.js');
+importScripts('../lib/markdown-it.js');
 
 function syncLivePreview() {
   self.addEventListener('message', function(event) {

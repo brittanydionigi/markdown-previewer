@@ -6,11 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>SW Markdown Previewer</title>
-    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
   </head>
 
   <body>
     <h1>Markdown Previewer</h1>
+    <h2>Service Workers with Messaging Example</h2>
     <p>Type markdown in the textarea on the left. Web worker shows HTML preview on the right. Submit button sends a message to a service worker with current markdown. Service worker should handle the message event and send a message back to the page that logs to the console.
     <div class="half">Type Markdown Here:</div>
     <div class="half">See HTML Preview Here:</div>
@@ -18,7 +19,7 @@
     <div id="html-preview"></div>
     <div id='submit-markdown'>Save to IndexedDB</div>
     
-    <script type="text/javascript" src="markdown-it.js"></script>
+    <script type="text/javascript" src="../lib/markdown-it.js"></script>
     <script type="text/javascript">
 
 
@@ -113,9 +114,9 @@
 
 
       registerServiceWorker('service-worker.js');
-      registerWebWorker('sync-live-preview.js');
+      registerWebWorker('../scripts/sync-live-preview.js');
 
     </script>
-    <script type="text/javascript" src="logging.js"></script>
+    <script type="text/javascript" src="../lib/logging.js"></script>
   </body>
 </html>

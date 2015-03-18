@@ -1,11 +1,11 @@
-importScripts('serviceworker-cache-polyfill.js');
+importScripts('../lib/serviceworker-cache-polyfill.js');
 
 self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open('assets-v15').then(function(cache) {
       return cache.addAll([
-        'style.css',
-        'markdown-it.js'
+        '../css/style.css',
+        '../lib/markdown-it.js'
       ]);
     })
   );

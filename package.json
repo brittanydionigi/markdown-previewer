@@ -15,7 +15,5 @@
     "url": "https://github.com/brittanystoroz/markdown-previewer/issues"
   },
   "homepage": "https://github.com/brittanystoroz/markdown-previewer",
-  "dependencies": {
-    "markdown-it": "^3.0.6"
-  }
+  "dependencies": {}
 }
