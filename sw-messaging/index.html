@@ -84,14 +84,16 @@
 
       // Check for Service Workers and register service worker script
       function registerServiceWorker(workerFile) {
-        console.log("Checking for service workers...");
+        console.log('Checking for service workers...');
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker.register(workerFile, {
             scope: './'
           }).then(function(reg) {
-            console.log("Service Worker Successfully Registered");
+            console.log('Service Worker Successfully Registered');
             enableSubmitButton();
           });
+        } else {
+          console.log('No service worker support :(');
         }
       }
 
