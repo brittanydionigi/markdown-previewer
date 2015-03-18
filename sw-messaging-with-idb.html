@@ -43,7 +43,14 @@
           console.error("DB could not open:", evt);
         };
         req.onupgradeneeded = function (evt) {
-          var store = evt.currentTarget.result.createObjectStore(
+          console.log("DB Upgrade Needed");
+          var dataB = evt.target.result;
+
+          if (dataB.objectStoreNames.contains(DB_STORE_NAME)) {
+            dataB.deleteObjectStore(DB_STORE_NAME);
+          }
+
+          var store = dataB.createObjectStore(
             DB_STORE_NAME, { keyPath: 'id', autoIncrement: true });
 
           store.createIndex('authorName', 'authorName', { unique: false });
