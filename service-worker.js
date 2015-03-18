@@ -22,9 +22,10 @@ self.addEventListener('fetch', function(event) {
 
 
 self.addEventListener('message', function(event) {
+  var markdownValue = event.data.mdContent;
   self.clients.matchAll().then(function(client) {
     client[0].postMessage({
-      message: 'hi there message here!!!'
+      message: 'Received markdown content: ' + markdownValue
     });
   });
 });
