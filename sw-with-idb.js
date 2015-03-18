@@ -1,4 +1,5 @@
-// importScripts('serviceworker-cache-polyfill.js');
+importScripts('serviceworker-cache-polyfill.js');
+
 
 self.addEventListener('install', function(event) {
   event.waitUntil(
@@ -22,15 +23,16 @@ self.addEventListener('fetch', function(event) {
 
 
 self.addEventListener('message', function(event) {
-  var result = event.data.mdContent;
   var swContext = self;
-  console.log("Command: ", event);
+
+  var result = event.data.mdContent;
   var cmd = event.data.command;
-  self.clients.matchAll().then(function(client) {
+
+  swContext.clients.matchAll().then(function(client) {
     client[0].postMessage({
       command: 'logMessage',
       error: null,
-      message: { 'context': swContext, 'message': 'hi there message here!!!!!' }
+      message: 'hi there message here.'
     });
   });
 
@@ -40,6 +42,14 @@ self.addEventListener('message', function(event) {
   // If we want to save the current version, add a new record
   // in our mdFileHistory database 
   if (cmd === 'saveToIndexedDB') {
+    self.clients.matchAll().then(function(client) {
+      client[0].postMessage({
+        command: 'logMessage',
+        error: null,
+        message: 'Trying to save to indexedDB...'
+      });
+    });
+
     var dbReq = indexedDB.open('mdFileHistory');
 
     dbReq.onsuccess = function(event) {
@@ -50,47 +60,49 @@ self.addEventListener('message', function(event) {
           message: 'db opened from service worker'
         });
       });
+      
       var db = event.target.result;
-      // var transaction = db.transaction(['mdFiles'], 'readwrite');
+      var transaction = db.transaction(['mdFiles'], 'readwrite');
 
-    //   transaction.oncomplete = function(event) {
-    //     console.log("Transaction completed!");
-    //     swContext.clients.matchAll().then(function(client) {
-    //       client[0].postMessage({
-    //         command: 'logMessage',
-    //         error: null,
-    //         message: 'rawr transaction complete'
-    //       });
-    //     });
-    //   }
-    //   transaction.onerror = function(event) {
-    //     console.log("Transaction error! ", transaction.error);
-    //     swContext.clients.matchAll().then(function(client) {
-    //       client[0].postMessage({
-    //         command: 'logMessage',
-    //         error: null,
-    //         message: event
-    //       });
-    //     });
-    //   }
+      transaction.oncomplete = function(event) {
+        swContext.clients.matchAll().then(function(client) {
+          client[0].postMessage({
+            command: 'logMessage',
+            error: null,
+            message: 'transaction success'
+          });
+        });
+      }
+      transaction.onerror = function(event) {
+        swContext.clients.matchAll().then(function(client) {
+          client[0].postMessage({
+            command: 'logMessage',
+            error: null,
+            message: 'transaction error'
+          });
+        });
+      }
 
-    //   var objectStore = transaction.objectStore("mdFiles");
-    //   var objectStoreReq = objectStore.add({ 
-    //     fileName: 'YOWHATUP-' + Date.now(),
-    //     authorName: 'brittany',
-    //     htmlContent: result
-    //   });
+      var objectStore = transaction.objectStore("mdFiles");
+      var objectStoreReq = objectStore.count();
 
-    //   objectStoreReq.onsuccess = function(event) {
-    //     console.log("Object store item added!");
-    //     swContext.clients.matchAll().then(function(client) {
-    //       console.log("Hello? ", client);
-    //       client[0].postMessage({
-    //         command: 'logMessage',
-    //         message: 'hello there'
-    //       });
-    //     });
-    //   }
+      objectStoreReq.onsuccess = function(event) {
+        swContext.clients.matchAll().then(function(client) {
+          client[0].postMessage({
+            command: 'logMessage',
+            message: 'objectStore req success!'
+          });
+        });
+      }
+
+      objectStoreReq.onerror = function(event) {
+        swContext.clients.matchAll().then(function(client) {
+          client[0].postMessage({
+            command: 'logMessage',
+            message: 'objectStore req failure!'
+          });
+        });
+      };
     };
 
     dbReq.onerror = function(event) {
