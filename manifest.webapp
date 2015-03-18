@@ -17,7 +17,5 @@
         "url": "https://github.com/brittanystoroz"
     },
     "launch_path": "/markdown-previewer/sw-messaging/index.html",
-    "installs_allowed_from": ["https://marketplace.firefox.com", "*"],
-    "type": "privileged",
-    "permissions": {}
+    "installs_allowed_from": ["https://marketplace.firefox.com", "*"]
 }
