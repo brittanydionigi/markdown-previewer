@@ -84,6 +84,7 @@
       function initiatePreview() {
         document.querySelector('#live-markdown').addEventListener('keyup', function(evt) {
           sendMessage({
+            recipient: 'webWorker',
             command: 'updatePreview',
             mdContent: evt.currentTarget.value
           });
@@ -106,6 +107,7 @@
           document.querySelector('#submit-markdown').addEventListener('click', function() {
             console.log("Clicked save button. Preparing to send data to service worker...");
             sendMessage({
+              recipient: 'serviceWorker',
               command: 'saveToIndexedDB',
               mdContent: document.querySelector('#live-markdown').value
             });
@@ -117,11 +119,8 @@
 
 
       function sendMessage(message) {
-        // navigator.serviceWorker.getRegistration().then(function(reg) {
-        //   reg.active.postMessage(message);
-        // });
-        if (message.command === 'saveToIndexedDB') {
-          navigator.serviceWorker.controller.postMessage(message);
+        if (message.recipient === 'serviceWorker') {
+          navigator.serviceWorker.controller.postMessage('hello');
         } else {
           previewWorker.postMessage(message);
         }
